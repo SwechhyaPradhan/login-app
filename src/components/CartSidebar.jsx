@@ -24,11 +24,10 @@ export default function CartSidebar({ isOpen, onClose }) {
     <>
       {/* Overlay — clicking outside closes sidebar */}
       {isOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-30 z-40"
-          onClick={onClose}
-        />
-      )}
+  <div
+    className="fixed inset-0 bg-black bg-opacity-30 z-40 pointer-events-none"
+  />
+)}
 
       {/* Sidebar */}
       <div

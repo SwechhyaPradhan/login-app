@@ -6,6 +6,7 @@ import CartSidebar from "./CartSidebar";
 import LoadingSkeleton from "./LoadingSkeleton";
 import { useCart } from "../context/CartContext";
 import { ShoppingCart } from "lucide-react";
+import { useDroppable } from "@dnd-kit/core";
 
 const PRODUCTS_PER_PAGE = 8;
 
@@ -26,20 +27,23 @@ export default function ProductList({ products, loading, error }) {
     setActiveProduct(active.data.current?.product);
   };
 
-  // Called when drag ends — if dropped on cart, add to cart
-  const handleDragEnd = (event) => {
-    const { over, active } = event;
-    setActiveProduct(null);
+  const { isOver: isOverCartButton, setNodeRef: setCartButtonRef } = useDroppable({
+  id: "cart-button"
+});
 
-    // Only add to cart if dropped on cart-sidebar drop zone
-    if (over && over.id === "cart-sidebar") {
-      const product = active.data.current?.product;
-      if (product) {
-        addToCart(product);
-        setCartOpen(true); // open cart to show item was added
-      }
+  // Called when drag ends — if dropped on cart, add to cart
+const handleDragEnd = (event) => {
+  const { over, active } = event;
+  setActiveProduct(null);
+
+  if (over && (over.id === "cart-sidebar" || over.id === "cart-button")) {
+    const product = active.data.current?.product;
+    if (product) {
+      addToCart(product);
+      setCartOpen(true); // open cart to show item was added
     }
-  };
+  }
+};
 
   // Handle page change — scroll to top
   const handlePageChange = (page) => {
@@ -78,20 +82,24 @@ export default function ProductList({ products, loading, error }) {
         </div>
 
         {/* Cart button */}
-        <button
-          onClick={() => setCartOpen(true)}
-          className="relative flex items-center gap-2 bg-blue-500 hover:bg-blue-600
-            text-white px-4 py-2 rounded-xl font-medium transition"
-        >
-          <ShoppingCart className="w-4 h-4" />
-          Cart
-          {totalItems > 0 && (
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white
-              text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
-              {totalItems}
-            </span>
-          )}
-        </button>
+       <button
+  ref={setCartButtonRef}
+  onClick={() => setCartOpen(true)}
+  className={`relative flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition
+    ${isOverCartButton
+      ? "bg-green-500 scale-110 text-white"
+      : "bg-blue-500 hover:bg-blue-600 text-white"
+    }`}
+>
+  <ShoppingCart className="w-4 h-4" />
+  Cart
+  {totalItems > 0 && (
+    <span className="absolute -top-2 -right-2 bg-red-500 text-white
+      text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+      {totalItems}
+    </span>
+  )}
+</button>
       </div>
 
       {/* Product grid */}

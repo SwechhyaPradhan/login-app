@@ -1,5 +1,6 @@
 import { useDraggable } from "@dnd-kit/core";
 import { useCart } from "../context/CartContext";
+import { useNavigate } from "react-router-dom";
 
 export default function ProductCard({ product }) {
   const { addToCart, cartItems } = useCart();
@@ -24,6 +25,8 @@ export default function ProductCard({ product }) {
   const discountedPrice = product.discountPercentage
     ? (product.price - (product.price * product.discountPercentage) / 100).toFixed(2)
     : null;
+
+  const navigate = useNavigate();
 
   return (
     <div
@@ -80,7 +83,7 @@ export default function ProductCard({ product }) {
       </div>
 
       {/* Product info */}
-      <div className="p-4">
+      <div className="p-4 cursor-pointer" onClick={() => navigate(`/products/${product.id}`)}>
         {/* Title */}
         <h3 className="font-semibold text-gray-800 text-sm mb-1 line-clamp-1">
           {product.title}
@@ -112,17 +115,20 @@ export default function ProductCard({ product }) {
             )}
           </div>
 
-          {/* Add to cart button */}
-          <button
-            onClick={() => addToCart(product)}
-            className={`text-xs font-medium px-3 py-2 rounded-xl transition duration-200
-              ${isInCart
-                ? "bg-green-100 text-green-600 hover:bg-green-200"
-                : "bg-blue-500 text-white hover:bg-blue-600"
-              }`}
-          >
-            {isInCart ? "✓ Added" : "+ Add to Cart"}
-          </button>
+        {/* Add to cart button */}
+<button
+  onClick={(e) => {
+    e.stopPropagation();
+    addToCart(product);
+  }}
+  className={`text-xs font-medium px-3 py-2 rounded-xl transition duration-200
+    ${isInCart
+      ? "bg-green-100 text-green-600 hover:bg-green-200"
+      : "bg-blue-500 text-white hover:bg-blue-600"
+    }`}
+>
+  {isInCart ? "✓ Added" : "+ Add to Cart"}
+</button>
         </div>
       </div>
     </div>

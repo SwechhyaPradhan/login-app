@@ -5,6 +5,7 @@ import ProductsPage from "./pages/ProductsPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import ProtectedRoute from "./ProtectedRoute";
 import PaymentVerifyPage from "./pages/PaymentVerifyPage";
+import ProductDetailPage from "./pages/ProductDetailPage";
 
 function App() {
   return (
@@ -19,6 +20,12 @@ function App() {
           <ProtectedRoute>
             <HomePage />
           </ProtectedRoute>
+        } />
+
+        <Route path="/products/:id" element={
+        <ProtectedRoute>
+          <ProductDetailPage />
+        </ProtectedRoute>
         } />
 
         {/* Products - protected */}
