@@ -1,16 +1,37 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AuthPage from "./AuthPage";
 import HomePage from "./HomePage";
-import ProtectedRoute from "./ProtectedRoute"; // ✅ import it
+import ProductsPage from "./pages/ProductsPage";
+import CheckoutPage from "./pages/CheckoutPage";
+import ProtectedRoute from "./ProtectedRoute";
+import PaymentVerifyPage from "./pages/PaymentVerifyPage";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/checkout/verify" element={<PaymentVerifyPage />} />
+        {/* Auth */}
         <Route path="/" element={<AuthPage />} />
+
+        {/* Dashboard - protected */}
         <Route path="/home" element={
-          <ProtectedRoute>   {/* ✅ wrap HomePage */}
+          <ProtectedRoute>
             <HomePage />
+          </ProtectedRoute>
+        } />
+
+        {/* Products - protected */}
+        <Route path="/products" element={
+          <ProtectedRoute>
+            <ProductsPage />
+          </ProtectedRoute>
+        } />
+
+        {/* Checkout - protected */}
+        <Route path="/checkout" element={
+          <ProtectedRoute>
+            <CheckoutPage />
           </ProtectedRoute>
         } />
       </Routes>
