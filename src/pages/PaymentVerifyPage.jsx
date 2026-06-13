@@ -3,6 +3,8 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { httpsCallable } from "firebase/functions";
 import { functions } from "../firebase";
 import { useCart } from "../context/CartContext";
+import { db } from "../firebase";
+import { doc, updateDoc } from "firebase/firestore";
 
 export default function PaymentVerifyPage() {
   const [searchParams] = useSearchParams();
@@ -11,31 +13,39 @@ export default function PaymentVerifyPage() {
   const [status, setStatus] = useState("Verifying your payment...");
 
   useEffect(() => {
-    const pidx = searchParams.get("pidx");
+  const pidx = searchParams.get("pidx");
+  const purchaseOrderId = searchParams.get("purchase_order_id");
 
-    if (!pidx) {
-      setStatus("Invalid payment reference.");
-      return;
-    }
+  if (!pidx) {
+    setStatus("Invalid payment reference.");
+    return;
+  }
 
-    const verify = httpsCallable(functions, "verifyKhaltiPayment");
+  const verify = httpsCallable(functions, "verifyKhaltiPayment");
 
-    verify({ pidx })
-      .then((res) => {
-        if (res.data.status === "Completed") {
-          setStatus("Payment Successful! 🎉");
-          clearCart();
-          // Optional: update order status in Firestore here using
-          // searchParams.get("purchase_order_id")
-        } else {
-          setStatus(`Payment ${res.data.status}. Please try again.`);
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-        setStatus("Could not verify payment. Please contact support.");
-      });
-  }, [searchParams, clearCart]);
+  verify({ pidx })
+    .then(async (res) => {
+      const paymentStatus = res.data.status;
+
+      if (purchaseOrderId) {
+        await updateDoc(doc(db, "orders", purchaseOrderId), {
+          status: paymentStatus, // "Completed", "Pending", "Expired", etc.
+          pidx,
+        });
+      }
+
+      if (paymentStatus === "Completed") {
+        setStatus("Payment Successful! 🎉");
+        clearCart();
+      } else {
+        setStatus(`Payment ${paymentStatus}. Please try again.`);
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      setStatus("Could not verify payment. Please contact support.");
+    });
+}, [searchParams, clearCart]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">

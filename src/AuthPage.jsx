@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { db } from "./firebase";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 
 import { auth } from "./firebase";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
@@ -25,11 +27,31 @@ export default function AuthPage() {
   const onSubmit = async (data) => {
     if (isLogin) {
       try {
-        await signInWithEmailAndPassword(auth, data.email, data.password);
+        const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
+        const user = userCredential.user;
+
+        // Fetch role from Firestore
+        const userDocSnap = await getDoc(doc(db, "users", user.uid));
+
+        // Debug logs - remove once everything works correctly
+        console.log("User UID:", user.uid);
+        console.log("Doc exists:", userDocSnap.exists());
+        console.log("Doc data:", userDocSnap.data());
+
+        const role = userDocSnap.exists() ? userDocSnap.data().role : "customer";
+        console.log("Role detected:", role);
+
         toast.success(`Welcome back! 🎉`);
-        setTimeout(() => navigate("/home"), 1500); // 👈 make sure "/home" matches your App.jsx route
+
+        setTimeout(() => {
+          if (role === "admin") {
+            navigate("/admin");
+          } else {
+            navigate("/home"); // your existing customer landing route
+          }
+        }, 1500);
+
       } catch (error) {
-        // ✅ FIXED - correct error code for newer Firebase versions
         if (error.code === "auth/invalid-credential") {
           toast.error("Invalid email or password! ❌");
         } else {
@@ -39,7 +61,16 @@ export default function AuthPage() {
 
     } else {
       try {
-        await createUserWithEmailAndPassword(auth, data.email, data.password);
+        const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
+        const user = userCredential.user;
+
+        // Save user profile + default role to Firestore
+        await setDoc(doc(db, "users", user.uid), {
+          name: data.name,
+          email: data.email,
+          role: "customer", // default role; change manually in Firestore console for admins
+        });
+
         toast.success("Account created! Please login. 🎉");
         setIsLogin(true);
         reset();

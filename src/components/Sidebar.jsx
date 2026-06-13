@@ -1,4 +1,5 @@
-import { Home, Users, BarChart2, FileText, Settings, LogOut } from "lucide-react";
+import { Home, ShoppingBag, Package, Heart, LogOut } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const SidebarLink = ({ icon: Icon, label, active, onClick }) => (
   <button
@@ -10,24 +11,25 @@ const SidebarLink = ({ icon: Icon, label, active, onClick }) => (
   </button>
 );
 
-const navLinks = [
-  { icon: Home,      label: "Dashboard" },
-  { icon: Users,     label: "Users"     },
-  { icon: BarChart2, label: "Analytics" },
-  { icon: FileText,  label: "Reports"   },
-  { icon: Settings,  label: "Settings"  },
-];
+export default function Sidebar({ activeTab, isOpen, onLogout }) {
+  const navigate = useNavigate();
 
-export default function Sidebar({ activeTab, setActiveTab, isOpen, onLogout }) {
+  const navLinks = [
+    { icon: Home,       label: "Dashboard", path: "/home" },
+    { icon: ShoppingBag, label: "Shop",      path: "/products" },
+    { icon: Package,    label: "My Orders", path: "/my-orders" },
+    { icon: Heart,      label: "Wishlist",  path: "/wishlist" },
+  ];
+
   return (
     <aside className={`${isOpen ? "w-64" : "w-0 overflow-hidden"} transition-all duration-300 bg-white border-r border-gray-100 flex flex-col py-6 px-3 shadow-sm`}>
 
       {/* Logo */}
       <div className="flex items-center gap-2 px-4 mb-8">
         <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-          <BarChart2 className="w-5 h-5 text-white" />
+          <ShoppingBag className="w-5 h-5 text-white" />
         </div>
-        <span className="text-lg font-bold text-gray-800">AdminPanel</span>
+        <span className="text-lg font-bold text-gray-800">MyShop</span>
       </div>
 
       {/* Nav Links */}
@@ -38,7 +40,7 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, onLogout }) {
             icon={link.icon}
             label={link.label}
             active={activeTab === link.label}
-            onClick={() => setActiveTab(link.label)}
+            onClick={() => navigate(link.path)}
           />
         ))}
       </nav>

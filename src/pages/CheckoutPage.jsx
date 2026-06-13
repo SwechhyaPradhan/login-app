@@ -6,6 +6,8 @@ import { useCart } from "../context/CartContext";
 import { ArrowLeft } from "lucide-react";
 import { httpsCallable } from "firebase/functions";
 import { functions } from "../firebase"; // adjust path as needed
+import { db, auth } from "../firebase";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
  
 // Validation schema
 const schema = z.object({
@@ -45,36 +47,40 @@ export default function CheckoutPage() {
     );
   }
  
-  const onSubmit = async (data) => {
-    try {
-      const orderId = `order_${Date.now()}`;
- 
-      const initiate = httpsCallable(functions, "initiateKhaltiPayment");
-      const result = await initiate({
-        amount: totalPrice,
-        orderId,
-        customerName: data.name,
-        customerEmail: data.email,
-      });
- 
-      // Optional: save order details (data, cartItems, orderId) to Firestore here
-      // so you can mark it "paid" later when verifying the payment.
-      // Example:
-      // await setDoc(doc(db, "orders", orderId), {
-      //   ...data,
-      //   items: cartItems,
-      //   totalPrice,
-      //   status: "pending",
-      //   createdAt: serverTimestamp(),
-      // });
- 
-      // Redirect to Khalti's hosted payment page
-      window.location.href = result.data.payment_url;
-    } catch (error) {
-      console.error("Payment initiation failed:", error);
-      alert("Something went wrong while starting payment. Please try again.");
-    }
-  };
+const onSubmit = async (data) => {
+  try {
+    const orderId = `order_${Date.now()}`;
+
+    // Save order as "pending" before redirecting to Khalti
+    await setDoc(doc(db, "orders", orderId), {
+      orderId,
+      userId: auth.currentUser?.uid || null,
+      customerName: data.name,
+      customerEmail: data.email,
+      customerPhone: data.phone,
+      deliveryAddress: data.address,
+      items: cartItems,
+      totalAmount: totalPrice,
+      status: "pending",
+      createdAt: serverTimestamp(),
+    });
+
+    const initiate = httpsCallable(functions, "initiateKhaltiPayment");
+    const result = await initiate({
+      amount: totalPrice,
+      orderId,
+      customerName: data.name,
+      customerEmail: data.email,
+    });
+
+    window.location.href = result.data.payment_url;
+  } catch (error) {
+  console.error("Payment initiation failed:", error);
+  console.error("Error code:", error.code);
+  console.error("Error message:", error.message);
+  alert("Something went wrong while starting payment. Please try again.");
+}
+};
  
   return (
     <div className="min-h-screen bg-gray-50">

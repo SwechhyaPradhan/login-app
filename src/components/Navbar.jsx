@@ -36,6 +36,12 @@ export default function Navbar({ name, activeTab, sidebarOpen, setSidebarOpen })
           </div>
           <span className="text-sm font-medium text-gray-700">{name}</span>
         </div>
+        <button
+  onClick={() => navigate("/my-orders")}
+  className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-xl text-sm font-medium transition duration-200"
+>
+  My Orders
+</button>
 
         {/* 👇 add this logout button */}
         <button onClick={handleLogout}

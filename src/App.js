@@ -6,6 +6,9 @@ import CheckoutPage from "./pages/CheckoutPage";
 import ProtectedRoute from "./ProtectedRoute";
 import PaymentVerifyPage from "./pages/PaymentVerifyPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
+import MyOrdersPage from "./pages/MyOrdersPage";
+import AdminRoute from "./AdminRoute";
+import AdminDashboardPage from "./pages/AdminDashboardPage";
 
 function App() {
   return (
@@ -22,11 +25,26 @@ function App() {
           </ProtectedRoute>
         } />
 
+        {/* My Orders - protected */}
+<Route path="/my-orders" element={
+  <ProtectedRoute>
+    <MyOrdersPage />
+  </ProtectedRoute>
+} />
+
+        {/* Product Details - protected */}
         <Route path="/products/:id" element={
         <ProtectedRoute>
           <ProductDetailPage />
         </ProtectedRoute>
         } />
+
+        
+<Route path="/admin" element={
+  <AdminRoute>
+    <AdminDashboardPage />
+  </AdminRoute>
+} />
 
         {/* Products - protected */}
         <Route path="/products" element={
