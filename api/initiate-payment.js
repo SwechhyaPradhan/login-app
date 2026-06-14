@@ -33,6 +33,9 @@ module.exports = async (req, res) => {
     res.json(response.data);
   } catch (error) {
     console.error(error.response?.data || error.message);
-    res.status(500).json({ error: "Payment initiation failed" });
-  }
+    res.status(500).json({ 
+      error: "Payment initiation failed", 
+      details: error.response?.data || error.message 
+    });
+}
 };

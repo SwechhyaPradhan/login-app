@@ -76,8 +76,9 @@ export default function CheckoutPage() {
       if (result.payment_url) {
         window.location.href = result.payment_url;
       } else {
-        alert("Failed to get payment URL. Please try again.");
-      }
+  console.error("Khalti error details:", result);
+  alert("Failed to get payment URL: " + JSON.stringify(result.details || result.error));
+}
 
     } catch (error) {
       console.error("Payment failed:", error);
