@@ -9,6 +9,7 @@ import ProductDetailPage from "./pages/ProductDetailPage";
 import MyOrdersPage from "./pages/MyOrdersPage";
 import AdminRoute from "./AdminRoute";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
+import PublicRoute from "./PublicRoute"; 
 
 function App() {
   return (
@@ -16,7 +17,11 @@ function App() {
       <Routes>
         <Route path="/checkout/verify" element={<PaymentVerifyPage />} />
         {/* Auth */}
-        <Route path="/" element={<AuthPage />} />
+        <Route path="/" element={
+          <PublicRoute>
+            <AuthPage />
+          </PublicRoute>
+        } />
 
         {/* Dashboard - protected */}
         <Route path="/home" element={

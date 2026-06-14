@@ -15,25 +15,31 @@ export default function Sidebar({ activeTab, isOpen, onLogout }) {
   const navigate = useNavigate();
 
   const navLinks = [
-    { icon: Home,       label: "Dashboard", path: "/home" },
+    { icon: Home,        label: "Dashboard", path: "/home" },
     { icon: ShoppingBag, label: "Shop",      path: "/products" },
-    { icon: Package,    label: "My Orders", path: "/my-orders" },
-    { icon: Heart,      label: "Wishlist",  path: "/wishlist" },
+    { icon: Package,     label: "My Orders", path: "/my-orders" },
+    { icon: Heart,       label: "Wishlist",  path: "/wishlist" },
   ];
 
   return (
-    <aside className={`${isOpen ? "w-64" : "w-0 overflow-hidden"} transition-all duration-300 bg-white border-r border-gray-100 flex flex-col py-6 px-3 shadow-sm`}>
-
+    <aside
+      className={`
+        h-screen sticky top-0 flex-shrink-0 flex flex-col
+        bg-white border-r border-gray-100 shadow-sm
+        transition-all duration-300 ease-in-out overflow-hidden
+        ${isOpen ? "w-64 px-3 py-6" : "w-0 px-0 py-0"}
+      `}
+    >
       {/* Logo */}
-      <div className="flex items-center gap-2 px-4 mb-8">
-        <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+      <div className="flex items-center gap-2 px-4 mb-8 whitespace-nowrap">
+        <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
           <ShoppingBag className="w-5 h-5 text-white" />
         </div>
         <span className="text-lg font-bold text-gray-800">MyShop</span>
       </div>
 
       {/* Nav Links */}
-      <nav className="flex flex-col gap-1 flex-1">
+      <nav className="flex flex-col gap-1 flex-1 whitespace-nowrap">
         {navLinks.map(link => (
           <SidebarLink
             key={link.label}
@@ -48,8 +54,8 @@ export default function Sidebar({ activeTab, isOpen, onLogout }) {
       {/* Logout */}
       <button
         onClick={onLogout}
-        className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 transition-all w-full">
-        <LogOut className="w-5 h-5" />
+        className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 transition-all w-full whitespace-nowrap">
+        <LogOut className="w-5 h-5 flex-shrink-0" />
         Logout
       </button>
     </aside>

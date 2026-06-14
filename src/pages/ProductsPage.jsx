@@ -1,28 +1,51 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { signOut } from "firebase/auth";
+import { auth } from "../firebase";
 import { useProducts } from "../hooks/useProducts";
 import ProductList from "../components/ProductList";
 import ErrorBoundary from "../components/ErrorBoundary";
+import Sidebar from "../components/Sidebar";
+import Navbar from "../components/Navbar";
 
 export default function ProductsPage() {
   const { products, loading, error } = useProducts();
+  const [isOpen, setIsOpen] = useState(true);
+  const navigate = useNavigate();
+
+  // ✅ Same pattern as HomePage
+  const name = auth.currentUser?.displayName || auth.currentUser?.email?.split("@")[0] || "User";
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    navigate("/");
+  };
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-gray-50">
-        {/* Page header */}
-        <div className="bg-white border-b border-gray-100 px-6 py-5 shadow-sm">
-          <h1 className="text-3xl font-bold text-gray-800">🛍️ Shop</h1>
-          <p className="text-gray-400 text-sm mt-1">
-            Drag products to cart or click Add to Cart
-          </p>
-        </div>
+      <div className="min-h-screen bg-gray-50 flex">
 
-        {/* Main content */}
-        <div className="max-w-7xl mx-auto px-6 py-8">
-          <ProductList
-            products={products}
-            loading={loading}
-            error={error}
+        <Sidebar
+          activeTab="Shop"
+          isOpen={isOpen}
+          onLogout={handleLogout}
+        />
+
+        <div className="flex-1 flex flex-col">
+          <Navbar
+            name={name}          // ✅ now passes real name
+            activeTab="Shop"
+            sidebarOpen={isOpen}
+            setSidebarOpen={setIsOpen}
           />
+
+          <div className="max-w-7xl mx-auto px-6 py-8 w-full">
+            <ProductList
+              products={products}
+              loading={loading}
+              error={error}
+            />
+          </div>
         </div>
       </div>
     </ErrorBoundary>
