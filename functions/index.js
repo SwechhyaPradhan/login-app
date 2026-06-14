@@ -7,8 +7,8 @@ exports.initiateKhaltiPayment = onCall(async (request) => {
   const {amount, orderId, customerName, customerEmail} = request.data;
 
   const payload = {
-    return_url: "http://localhost:3000/checkout/verify", // update later for production
-    website_url: "http://localhost:3000",
+    return_url: "https://login-app-omega.vercel.app/checkout/verify", // update later for production
+    website_url: "https://login-app-omega.vercel.app/",
     amount: Math.round(amount * 100), // NPR to paisa, must be an integer
     purchase_order_id: orderId,
     purchase_order_name: `Order-${orderId}`,
