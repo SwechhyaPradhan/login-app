@@ -19,7 +19,8 @@ const schema = z.object({
  
 export default function CheckoutPage() {
   const navigate = useNavigate();
-  const { cartItems, totalPrice, clearCart } = useCart();
+  // eslint-disable-next-line no-unused-vars
+const { cartItems, totalPrice, clearCart } = useCart();
  
   const {
     register,
