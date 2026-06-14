@@ -1,4 +1,4 @@
-import { Home, ShoppingBag, Package, Heart, LogOut } from "lucide-react";
+import { Home, ShoppingBag, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const SidebarLink = ({ icon: Icon, label, active, onClick }) => (
