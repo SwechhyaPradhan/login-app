@@ -116,27 +116,8 @@ export default function HomePage() {
               <ArrowRight className="w-5 h-5 text-gray-300" />
             </button>
 
-            <button
-              onClick={() => navigate("/checkout")}
-              className="bg-white rounded-2xl shadow-sm p-5 flex items-center justify-between hover:shadow-md transition text-left"
-            >
-              <div>
-                <p className="font-semibold text-gray-800">Go to Checkout</p>
-                <p className="text-xs text-gray-400 mt-1">{totalItems} item(s) in cart</p>
-              </div>
-              <ArrowRight className="w-5 h-5 text-gray-300" />
-            </button>
+          
 
-            <button
-              onClick={() => navigate("/my-orders")}
-              className="bg-white rounded-2xl shadow-sm p-5 flex items-center justify-between hover:shadow-md transition text-left"
-            >
-              <div>
-                <p className="font-semibold text-gray-800">My Orders</p>
-                <p className="text-xs text-gray-400 mt-1">{orderCount} order(s) placed</p>
-              </div>
-              <ArrowRight className="w-5 h-5 text-gray-300" />
-            </button>
           </div>
 
           {/* Recent orders */}

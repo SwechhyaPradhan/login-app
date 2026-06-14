@@ -17,8 +17,7 @@ export default function Sidebar({ activeTab, isOpen, onLogout }) {
   const navLinks = [
     { icon: Home,        label: "Dashboard", path: "/home" },
     { icon: ShoppingBag, label: "Shop",      path: "/products" },
-    { icon: Package,     label: "My Orders", path: "/my-orders" },
-    { icon: Heart,       label: "Wishlist",  path: "/wishlist" },
+    
   ];
 
   return (
