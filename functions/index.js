@@ -1,7 +1,7 @@
 const {onCall} = require("firebase-functions/v2/https");
 const axios = require("axios");
 
-const KHALTI_BASE_URL = "https://dev.khalti.com/api/v2"; // sandbox/test
+const KHALTI_BASE_URL = "https://khalti.com/api/v2"; // sandbox/test
 
 exports.initiateKhaltiPayment = onCall(async (request) => {
   const {amount, orderId, customerName, customerEmail} = request.data;
