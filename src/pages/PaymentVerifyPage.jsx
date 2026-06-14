@@ -31,8 +31,7 @@ export default function PaymentVerifyPage() {
 
         if (result.status === "Completed") {
           // Find order by pidx or purchase_order_id and update status
-          const orderId = result.transaction_id || searchParams.get("purchase_order_id");
-
+          
           const q = query(
             collection(db, "orders"),
             where("status", "==", "pending")
@@ -63,7 +62,7 @@ export default function PaymentVerifyPage() {
     };
 
     verify();
-  }, []);
+  }, [searchParams, navigate, clearCart]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
