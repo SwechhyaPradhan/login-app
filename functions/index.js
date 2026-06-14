@@ -1,15 +1,19 @@
 const {onCall} = require("firebase-functions/v2/https");
+const {defineString} = require("firebase-functions/params");
 const axios = require("axios");
 
-const KHALTI_BASE_URL = "https://khalti.com/api/v2"; // sandbox/test
+const khaltiSecretKey = defineString("KHALTI_SECRET_KEY");
+
+const KHALTI_BASE_URL = "https://khalti.com/api/v2";
+const VERCEL_URL = "https://login-app-omega.vercel.app";
 
 exports.initiateKhaltiPayment = onCall(async (request) => {
   const {amount, orderId, customerName, customerEmail} = request.data;
 
   const payload = {
-    return_url: "https://login-app-omega.vercel.app/checkout/verify", // update later for production
-    website_url: "https://login-app-omega.vercel.app/",
-    amount: Math.round(amount * 100), // NPR to paisa, must be an integer
+    return_url: `${VERCEL_URL}/checkout/verify`,
+    website_url: VERCEL_URL,
+    amount: Math.round(amount * 100),
     purchase_order_id: orderId,
     purchase_order_name: `Order-${orderId}`,
     customer_info: {
@@ -23,10 +27,12 @@ exports.initiateKhaltiPayment = onCall(async (request) => {
         `${KHALTI_BASE_URL}/epayment/initiate/`,
         payload,
         {
-          headers: {Authorization: `Key ${process.env.KHALTI_SECRET_KEY}`},
+          headers: {
+            Authorization: `Key ${khaltiSecretKey.value()}`,
+          },
         },
     );
-    return response.data; // { pidx, payment_url }
+    return response.data;
   } catch (error) {
     console.error(error.response?.data || error.message);
     throw new Error("Failed to initiate Khalti payment");
@@ -41,10 +47,12 @@ exports.verifyKhaltiPayment = onCall(async (request) => {
         `${KHALTI_BASE_URL}/epayment/lookup/`,
         {pidx},
         {
-          headers: {Authorization: `Key ${process.env.KHALTI_SECRET_KEY}`},
+          headers: {
+            Authorization: `Key ${khaltiSecretKey.value()}`,
+          },
         },
     );
-    return response.data; // { status: "Completed" | "Pending" | ... }
+    return response.data;
   } catch (error) {
     console.error(error.response?.data || error.message);
     throw new Error("Failed to verify Khalti payment");
